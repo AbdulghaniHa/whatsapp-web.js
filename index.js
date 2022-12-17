@@ -1,32 +1,22 @@
-'use strict';
+const repl = require('repl');
+const { Client, LocalAuth } = require('./helpers');
 
-const Constants = require('./src/util/Constants');
+const client = new Client({
+    puppeteer: { headless: false }, 
+    authStrategy: new LocalAuth()
+});
 
-module.exports = {
-    Client: require('./src/Client'),
-    
-    version: require('./package.json').version,
+console.log('Initializing...');
 
-    // Structures
-    Chat: require('./src/structures/Chat'),
-    PrivateChat: require('./src/structures/PrivateChat'),
-    GroupChat: require('./src/structures/GroupChat'),
-    Message: require('./src/structures/Message'),
-    MessageMedia: require('./src/structures/MessageMedia'),
-    Contact: require('./src/structures/Contact'),
-    PrivateContact: require('./src/structures/PrivateContact'),
-    BusinessContact: require('./src/structures/BusinessContact'),
-    ClientInfo: require('./src/structures/ClientInfo'),
-    Location: require('./src/structures/Location'),
-    ProductMetadata: require('./src/structures/ProductMetadata'),
-    List: require('./src/structures/List'),
-    Buttons: require('./src/structures/Buttons'),
-    
-    // Auth Strategies
-    NoAuth: require('./src/authStrategies/NoAuth'),
-    LocalAuth: require('./src/authStrategies/LocalAuth'),
-    RemoteAuth: require('./src/authStrategies/RemoteAuth'),
-    LegacySessionAuth: require('./src/authStrategies/LegacySessionAuth'),
-    
-    ...Constants
-};
+client.initialize();
+
+client.on('qr', () => {
+    console.log('Please scan the QR code on the browser.');
+});
+
+client.on('authenticated', (session) => {
+    console.log(JSON.stringify(session));
+});
+
+client.on('ready', () => {
+});
